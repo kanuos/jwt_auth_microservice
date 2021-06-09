@@ -4,7 +4,7 @@
   "description": "A JWT based token authentication/authorization API using Express and MongoDB",
   "main": "server.js",
   "scripts": {
-      "dev": "nodemon server.js"
+    "dev": "nodemon server.js"
   },
   "keywords": [
     "JWT",
@@ -19,9 +19,9 @@
   "dependencies": {
     "bcryptjs": "^2.4.3",
     "express": "^4.17.1",
+    "joi": "^17.4.0",
     "jsonwebtoken": "^8.5.1",
-    "mongoose": "^5.12.13",
-    "yup": "^0.32.9"
+    "mongoose": "^5.12.13"
   },
   "devDependencies": {
     "dotenv": "^10.0.0",
