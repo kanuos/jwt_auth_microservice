@@ -17,16 +17,7 @@ const UserSchema = new Schema({
     dateJoined : {
         type: Schema.Types.Date,
         default : Date.now
-    },
-    country : {
-        type: Schema.Types.String,
-    },
-    profilePicture : {
-        type: Schema.Types.String,
-    },
-    bio : {
-        type: Schema.Types.String,
-    },
+    }
 });
 
 
