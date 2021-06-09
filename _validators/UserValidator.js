@@ -37,7 +37,7 @@ const userRegisterSchema = joi.object({
                  .messages({
                         "string.empty": "Password cannot be empty or blank spaces",
                         "any.required": "Password is required",
-                        "string.min": "Password must be at least 2 characters long",
+                        "string.min": "Password must be at least 6 characters long",
                         "string.max": "Password must be at most 20 characters long"
                     }),
 
@@ -65,7 +65,7 @@ const userLoginSchema = joi.object({
                  .messages({
                         "string.empty": "Password cannot be empty or blank spaces",
                         "any.required": "Password is required",
-                        "string.min": "Password must be at least 2 characters long",
+                        "string.min": "Password must be at least 6 characters long",
                         "string.max": "Password must be at most 20 characters long"
                     }),
 
