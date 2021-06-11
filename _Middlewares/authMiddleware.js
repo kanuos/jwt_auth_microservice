@@ -40,7 +40,6 @@ function verifyAccessToken(token) {
             algorithm: 'HS384',
             expiresIn : '1 m',
         })
-        console.log("Access valid ",isVerifiedToken);
         return isVerifiedToken;
     } catch (error) {
         console.log("access verify error \n", error.message);
@@ -55,7 +54,6 @@ function verifyRefreshToken(token) {
             algorithm: 'HS384',
             expiresIn : '5 m',
         })
-        console.log("Refresh valid : ", isVerifiedToken);
         return isVerifiedToken;
     } catch (error) {
         console.log("refresh verify error \n", error.message);
@@ -63,8 +61,47 @@ function verifyRefreshToken(token) {
     }
 }
 
-async function onlyPrivate(req, res, next) {
+async function onlyPrivate(req, res, next) {    
+    try {
+        const cookieString = req.headers.cookie;
+        // if no cookies received
+        if(!cookieString) {
+            throw Error("401")
+        }
+        const {refresh, access } = getTokensFromCookies(cookieString)
+        const hasAccess = verifyAccessToken(access)
+        const canRefresh = verifyRefreshToken(refresh);
+        if (!hasAccess) {
+            if (!canRefresh) {
+                throw Error("401")
+            }
+            console.log("Signing new tokens with refresh payload : ", canRefresh);
+            const tokens = signTokens({uid: canRefresh.uid});
+            if (!tokens.access || !tokens.refresh) {
+                throw Error("401")
+            }
+            
+            res.cookie("at", tokens.access, { httpOnly: true })
+            res.cookie("rt", tokens.refresh, { httpOnly: true })
+            req.activeUser = canRefresh.uid
+            return next()
+        }
+        req.activeUser = canRefresh.uid
+        return next()
 
+    } catch (error) {
+        // if access token expired
+        if (error.message === "401"){
+            deleteTokenCookies(res)
+            return res.json({
+                data : null,
+                error : {
+                    status: true,
+                    message: error.message
+                }
+            })
+        }
+    }
 }
 
 function onlyPublic(req, res, next) {
@@ -111,7 +148,7 @@ function signTokens(payload) {
 }
 
 function getTokensFromCookies(cookieString) {
-    if (!cookieString) {
+    if (!cookieString || !cookieString.includes(';')) {
         return {
             refresh: null,
             access: null
@@ -128,8 +165,8 @@ function getTokensFromCookies(cookieString) {
         }
     })
     return {
-        refresh: refresh.trim() ?? null,
-        access: access.trim() ?? null,
+        refresh: refresh.trim(),
+        access: access.trim(),
     }
 }
 

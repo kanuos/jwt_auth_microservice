@@ -80,6 +80,7 @@ async function loginUser(req, res) {
 
         res.cookie("at", access, { httpOnly: true })
         res.cookie("rt", refresh, { httpOnly: true })
+        
 
         return res.status(201).json({
             data : {uid: existingUser._id, name: existingUser.name, email: existingUser.email },
