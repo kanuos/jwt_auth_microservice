@@ -1,10 +1,11 @@
 const authRouter = require("express").Router();
 const {
         registerUser,    
-        loginUser    
+        loginUser,    
+        logoutUser
 } = require("../_Controller/UserController")
 
-const { onlyPublic } = require("../_Middlewares/authMiddleware")
+const { onlyPublic, onlyPrivate } = require("../_Middlewares/authMiddleware")
 
 /**
  * Method   : POST
@@ -28,12 +29,12 @@ authRouter.post("/login",onlyPublic, loginUser)
 
 /**
  * Method   : POST
- * URL      : /auth/login
- * ACCESS   : Public
- * DESC     : Logs in an existing user
+ * URL      : /auth/logout
+ * ACCESS   : Private
+ * DESC     : Logs the user out. 
  */
 
-authRouter.post("/logout",onlyPublic, loginUser)
+authRouter.post("/logout", onlyPrivate, logoutUser)
 
 
 

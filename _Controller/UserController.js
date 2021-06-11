@@ -2,8 +2,7 @@ const User = require("../_Models/User");
 const bcrypt = require("bcryptjs");
 const {RegisterValidator, LoginValidator} = require("../_validators/UserValidator");
 const {
-        onlyPublic, 
-        signTokens,
+        signTokens, deleteTokenCookies,
     
     } = require("../_Middlewares/authMiddleware");
 
@@ -111,8 +110,29 @@ async function checkEmailAvailability(email) {
     }
 }
 
+async function logoutUser(req, res) {
+    try {
+        deleteTokenCookies(res)
+        return res.status(201).json({
+            data : {
+                message : "logged out successfully"
+            },
+            error : null
+        })
+    } catch (error) {
+        console.log(error);
+        return res.status(201).json({
+            data : null,
+            error : {
+                status : true,
+                message : error.message
+            }
+        })
+    }
+}
+
 
 
 module.exports = {
-    registerUser, loginUser, checkEmailAvailability
+    registerUser, loginUser, checkEmailAvailability, logoutUser
 }

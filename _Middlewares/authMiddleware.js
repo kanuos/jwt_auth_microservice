@@ -174,5 +174,6 @@ function getTokensFromCookies(cookieString) {
 module.exports = {
     signTokens,
     onlyPublic,
-    onlyPrivate
+    onlyPrivate,
+    deleteTokenCookies
 }
