@@ -1,6 +1,12 @@
 const jwt = require("jsonwebtoken");
 
-const { REFRESH_SECRET, ACCESS_SECRET } = process.env;
+const { 
+    REFRESH_SECRET, 
+    ACCESS_SECRET, 
+    JWT_ALGORITHM, 
+    REFRESH_EXPIRY, 
+    ACCESS_EXPIRY 
+} = process.env;
 
 function signAccessToken(payloadData) {
     try {
@@ -8,8 +14,8 @@ function signAccessToken(payloadData) {
             throw Error("Invalid payload")
         }
         const at = jwt.sign(payloadData, ACCESS_SECRET, {
-            algorithm: 'HS384',
-            expiresIn : '1 m',  
+            algorithm: JWT_ALGORITHM,
+            expiresIn : ACCESS_EXPIRY,  
         })
         return at;
         
@@ -24,8 +30,8 @@ function signRefreshToken(payloadData) {
             throw Error("Invalid payload")
         }
         const rt = jwt.sign(payloadData, REFRESH_SECRET, {
-            algorithm: 'HS384',
-            expiresIn : '5 m',  
+            algorithm: JWT_ALGORITHM,
+            expiresIn : REFRESH_EXPIRY,  
         })
         return rt;
         
@@ -37,12 +43,11 @@ function signRefreshToken(payloadData) {
 function verifyAccessToken(token) {
     try {
         const isVerifiedToken = jwt.verify(token, ACCESS_SECRET,{
-            algorithm: 'HS384',
-            expiresIn : '1 m',
+            algorithm: JWT_ALGORITHM,
+            expiresIn : ACCESS_EXPIRY,
         })
         return isVerifiedToken;
     } catch (error) {
-        console.log("access verify error \n", error.message);
         return false;
     }
 }
@@ -51,12 +56,11 @@ function verifyRefreshToken(token) {
     try {
         console.log("verifying refresh token");
         const isVerifiedToken = jwt.verify(token, REFRESH_SECRET,{
-            algorithm: 'HS384',
-            expiresIn : '5 m',
+            algorithm: JWT_ALGORITHM,
+            expiresIn : REFRESH_EXPIRY,
         })
         return isVerifiedToken;
     } catch (error) {
-        console.log("refresh verify error \n", error.message);
         return false;
     }
 }
@@ -75,7 +79,6 @@ async function onlyPrivate(req, res, next) {
             if (!canRefresh) {
                 throw Error("401")
             }
-            console.log("Signing new tokens with refresh payload : ", canRefresh);
             const tokens = signTokens({uid: canRefresh.uid});
             if (!tokens.access || !tokens.refresh) {
                 throw Error("401")
