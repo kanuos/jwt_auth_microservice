@@ -6,7 +6,8 @@ const {MONGO_URI} = process.env;
         await connect(MONGO_URI, {
             useNewUrlParser: true,
             useUnifiedTopology : true,
-            useFindAndModify : true
+            useFindAndModify : true,
+            useCreateIndex: true
         });
         console.log('Connected to Database Server');
     } catch (error) {

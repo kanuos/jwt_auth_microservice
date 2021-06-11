@@ -12,9 +12,12 @@ app.use(express.urlencoded({ extended: false }))
 // database connection
 require("./_database");
 
+// TODO: express rate limiter error 429
+// TODO: helmet
 
 // use route middlewares
 app.use("/auth", require("./_Routes/AuthRoute"));
+app.use("/api", require("./_Routes/TestRoute"));
 
 
 // listening for incoming requests
